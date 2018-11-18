@@ -103,11 +103,6 @@ module combination(clk, rdy, reset, data, streamEnd, match, startPos, endPos);
         if (position < pattern_1_end) begin
           // Handle the first pattern logic (this is a simple pattern)
           if (data == simplePattern[position]) begin
-            if (-1 == startPosition) begin
-              // A new opening character has been detected, note the position
-              startPosition <= position;
-            end // if (0 == startPosition)
-
             position <= positionNext;
           end else begin 
             position = 0;
@@ -136,6 +131,13 @@ module combination(clk, rdy, reset, data, streamEnd, match, startPos, endPos);
           end // end else
         end // end else
       end // end else
+
+      // If the position is 0, assign it as a possible start position
+      // This avoids placing the logic in a specific regular expression subsection.
+      if (0 == position) begin
+        // A new opening character has been detected, note the position
+        startPosition <= position;
+      end // if (0 == startPosition)
 
       charCounter <= charCounterNext;
       readyReg = 1;

@@ -2,3 +2,88 @@
 // Created by todd on 11/18/18.
 //
 
+#include "compiler/PatternCompiler.h"
+
+#include "compiler/CompilerException.h"
+
+namespace compiler {
+
+PatternCompiler::PatternCompiler() : Compiler { } { }
+
+PatternCompiler::PatternCompiler(uint patternId) : Compiler { patternId } { }
+
+void PatternCompiler::handleCodon(std::shared_ptr<compiler::Codon> codon){
+  if (CodonType::PATTERN != codon->type()) {
+    throw CompilerException { "Invalid codon given to pattern compiler" };
+  }
+
+  if (!codon->children().empty()) {
+    throw CompilerException { "Patterns can only serve as terminal nodes." };
+  }
+
+  if (codon->pattern().empty()  || !validPattern(codon->pattern())) {
+    throw CompilerException { "Patterns must have a valid character sequence to match." };
+  }
+  pattern_ = codon->pattern();
+
+  patternInitComment();
+  patternInitDeclare();
+  patternInitSize();
+  patternInitAssign();
+  patternSeqLogic();
+}
+
+std::string PatternCompiler::initializationText() {
+  return initStream_.str();
+}
+
+std::string PatternCompiler::combinationalText() {
+  return "";
+}
+
+std::string PatternCompiler::sequentialText() {
+  return seqStream_.str();
+}
+
+bool PatternCompiler::validPattern(const std::string& pattern) {
+  for (char c : pattern) {
+    if (48 > c || 127 < c) {
+      // If the character is outside of the range supported, fail to compile the pattern.
+      return false;
+    }
+  }
+
+  return true;
+}
+
+void PatternCompiler::patternInitComment() {
+  initStream_ << "  // Expected pattern for " << patternId_ << " with characters " << pattern_ << std::endl;
+}
+
+void PatternCompiler::patternInitDeclare() {
+  initStream_ << "  wire [7:0] pattern_" << patternId_ << "_expected [" << pattern_.size() - 1 << ":0];" << std::endl;
+}
+
+void PatternCompiler::patternInitSize() {
+  initStream_ << "  reg [31:0] pattern_" << patternId_ << "_size = " << incrementPatternSize(pattern_.size()) << ";"
+      << std::endl << std::endl;
+}
+
+void PatternCompiler::patternInitAssign() {
+  for (uint i = 0; i < pattern_.size(); i++) {
+    initStream_ << "  assign pattern_" << patternId_ << "_expected[" << i << "] = \"" << pattern_[i] << "\";"
+        << std::endl;
+  }
+  initStream_ << std::endl;
+}
+
+void PatternCompiler::patternSeqLogic() {
+  seqStream_ << "          // Handle simple pattern logic\n"
+                "          if (data == pattern_" << patternId_ << "_expected[position]) begin\n"
+                "            position <= positionNext;\n"
+                "          end else begin \n"
+                "            position = 0;\n"
+                "          end // end else\n" << std::endl;
+}
+
+}

@@ -8,14 +8,7 @@
 
 namespace compiler {
 
-Codon::Codon(CodonType type, std::string pattern) {
-  type_ = type;
-  pattern_ = pattern;
-}
-
-Codon::Codon(CodonType type, std::string pattern, std::shared_ptr<Codon> parent) : Codon(type, pattern) {
-  parent->addChild(shared_from_this());
-}
+Codon::Codon(CodonType type, std::string pattern) : type_ { type }, pattern_ { pattern } { }
 
 CodonType Codon::type() const {
   return type_;

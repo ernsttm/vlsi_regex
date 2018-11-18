@@ -17,11 +17,21 @@ namespace compiler {
 class RootCompiler : public Compiler {
  public:
   RootCompiler() = default;
-  void compile(std::shared_ptr<Codon> codon) override;
+
+  void handleCodon(std::shared_ptr<Codon> codon) override;
+
   std::string initializationText() override;
+
   std::string combinationalText() override;
+
   std::string sequentialText() override;
+
   ~RootCompiler() override = default;
+
+ private:
+  std::string seqText_;
+  std::string initText_;
+  std::string comboText_;
 };
 
 }

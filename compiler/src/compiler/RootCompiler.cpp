@@ -4,11 +4,13 @@
 
 #include "compiler/RootCompiler.h"
 
+#include "compiler/CompilerException.h"
+
 namespace compiler {
 
 // This string contains the header information used by all regex modules.
 const std::string ROOT_INITIALIZATION =
-    "module combination(clk, rdy, reset, data, streamEnd, match, startPos, endPos);\n"
+    "module compiled_regex(clk, rdy, reset, data, streamEnd, match, startPos, endPos);\n"
     "  input clk; // Input clock\n"
     "  output rdy; // Goes to 1 when the circuit has completed\n"
     "  input reset; // Reset the logic for the next execution cycle\n"
@@ -58,17 +60,17 @@ const std::string ROOT_INITIALIZATION =
     "      endReporter = endPosition;\n"
     "      startReporter = startPosition;\n"
     "    end\n"
-    "  endtask ";
+    "  endtask \n";
 
 const std::string ROOT_COMBO_HEADER =
     "// Combinational Logic for incrementing the counters\n"
     "  always @(*) begin\n"
     "    // Normal counters\n"
     "    positionNext = position + 1;\n"
-    "    charCounterNext = charCounter + 1;";
+    "    charCounterNext = charCounter + 1;\n";
 
 const std::string ROOT_COMBO_FOOTER =
-    "end // always @(*)";
+    "end // always @(*)\n";
 
 const std::string ROOT_SEQ_HEADER =
     "// Sequential logic for determining if stream matches the given regular\n"
@@ -76,29 +78,53 @@ const std::string ROOT_SEQ_HEADER =
     "  always @(reset or posedge clk)\n"
     "    if (reset)\n"
     "      clear;\n"
-    "    else begin";
+    "    else begin\n";
+
+const std::string ROOT_SEQ_FOOTER =
+    "      // If the position is 0, assign it as a possible start position\n"
+    "      // This avoids placing the logic in a specific regular expression subsection.\n"
+    "      if (0 == position) begin\n"
+    "        // A new opening character has been detected, note the position\n"
+    "        startPosition <= position;\n"
+    "      end // if (0 == startPosition)\n"
+    "\n"
+    "      charCounter <= charCounterNext;\n"
+    "      readyReg = 1;\n"
+    "    end // else\n"
+    "endmodule // combination";
 
 
-
-
-void RootCompiler::compile(std::shared_ptr<Codon> codon) {
+void RootCompiler::handleCodon(std::shared_ptr<compiler::Codon> codon){
   if (CodonType::ROOT != codon->type()) {
-    // throw
+    throw CompilerException { "Invalid codon given to root compiler." };
   }
 
+  initText_ = ROOT_INITIALIZATION;
+  comboText_ = ROOT_COMBO_HEADER;
+  seqText_ = ROOT_SEQ_HEADER;
 
+  for (auto& child : codon->children()) {
+    std::shared_ptr<Compiler> codonCompiler = compile(child);
+
+    initText_.append(codonCompiler->initializationText());
+    comboText_.append(codonCompiler->combinationalText());
+    seqText_.append(codonCompiler->sequentialText());
+  }
+
+  comboText_.append(ROOT_COMBO_FOOTER);
+  seqText_.append(ROOT_SEQ_FOOTER);
 }
 
 std::string RootCompiler::initializationText() {
-  return std::__cxx11::string();
+  return initText_;
 }
 
 std::string RootCompiler::combinationalText() {
-  return std::__cxx11::string();
+  return comboText_;
 }
 
 std::string RootCompiler::sequentialText() {
-  return std::__cxx11::string();
+  return seqText_;
 }
 
 }

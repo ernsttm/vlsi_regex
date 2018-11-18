@@ -5,6 +5,8 @@
 #ifndef REGEX_COMPILER_COMPILER_PATTERNCOMPILER_H_
 #define REGEX_COMPILER_COMPILER_PATTERNCOMPILER_H_
 
+#include <sstream>
+
 #include "compiler/Compiler.h"
 
 namespace compiler {
@@ -15,12 +17,32 @@ namespace compiler {
  */
 class PatternCompiler : public Compiler {
  public:
-  PatternCompiler() = default;
-  void compile(std::shared_ptr<Codon> codon) override;
+  PatternCompiler();
+
+  explicit PatternCompiler(uint patternId);
+
+  void handleCodon(std::shared_ptr<Codon> codon) override;
+
   std::string initializationText() override;
+
   std::string combinationalText() override;
+
   std::string sequentialText() override;
+
   ~PatternCompiler() override = default;
+
+ private:
+  std::string pattern_;
+
+  std::ostringstream initStream_;
+  std::ostringstream seqStream_;
+
+  bool validPattern(const std::string& pattern);
+  void patternInitComment();
+  void patternInitDeclare();
+  void patternInitSize();
+  void patternInitAssign();
+  void patternSeqLogic();
 };
 
 }

@@ -33,7 +33,7 @@ enum class CodonType {
   REPITITION
 };
 
-class Codon : public std::enable_shared_from_this<Codon> {
+class Codon {
  public:
   /**
    * Create a new codon in the parsed regular expression tree.
@@ -42,15 +42,6 @@ class Codon : public std::enable_shared_from_this<Codon> {
    * @param pattern the characters informing the codon being created.
    */
   Codon(CodonType type, std::string pattern);
-
-  /**
-   * Create a new codon in the parsed regular expression tree.
-   *
-   * @param type the CodonType this node represents.
-   * @param pattern the characters informing the codon being created.
-   * @param parent the parent node of the Codon node being created.
-   */
-  Codon(CodonType type, std::string pattern, std::shared_ptr<Codon> parent);
 
   /**
    * @return the CodonType this node represents.
