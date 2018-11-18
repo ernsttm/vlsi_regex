@@ -1,2 +1,6 @@
+# Directory Ignores
 compiler/.idea
 compiler/cmake-build-debug
+
+# File Ignores
+*.vpp

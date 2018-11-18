@@ -135,10 +135,9 @@ module combination(clk, rdy, reset, data, streamEnd, match, startPos, endPos);
             endPosition <= -1;
           end // end else
         end // end else
-
-        charCounter <= charCounterNext;
       end // end else
 
+      charCounter <= charCounterNext;
       readyReg = 1;
     end // else
 endmodule // combination
