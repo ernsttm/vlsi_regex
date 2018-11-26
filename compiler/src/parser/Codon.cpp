@@ -8,7 +8,8 @@
 
 namespace compiler {
 
-Codon::Codon(CodonType type, std::string pattern) : type_ { type }, pattern_ { pattern } { }
+Codon::Codon(CodonType type, const std::string& pattern, bool final)
+    : type_ { type }, pattern_ { pattern }, final_ { final } { }
 
 CodonType Codon::type() const {
   return type_;
@@ -16,6 +17,10 @@ CodonType Codon::type() const {
 
 std::string Codon::pattern() const {
   return pattern_;
+}
+
+bool Codon::final() const {
+  return final_;
 }
 
 std::vector<std::shared_ptr<Codon>> Codon::children() const {

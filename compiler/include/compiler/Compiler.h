@@ -51,6 +51,8 @@ class Compiler {
 
    static std::shared_ptr<Compiler> compile(std::shared_ptr<Codon> codon);
 
+   static void output(const std::string& fileName, std::shared_ptr<Compiler> module);
+
  protected:
   // A protected constructor to make tests more repeatable
   explicit Compiler(uint patternId);

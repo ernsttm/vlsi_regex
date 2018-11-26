@@ -2,6 +2,8 @@
 // Created by todd on 11/18/18.
 //
 
+#include <fstream>
+
 #include "compiler/Compiler.h"
 
 #include "compiler/CompilerException.h"
@@ -30,6 +32,16 @@ std::shared_ptr<Compiler> Compiler::compile(std::shared_ptr<compiler::Codon> cod
 
   codonCompiler->handleCodon(codon);
   return codonCompiler;
+}
+
+void Compiler::output(const std::string& fileName, std::shared_ptr<compiler::Compiler> module) {
+  std::ofstream file { };
+
+  file.open(fileName, std::ofstream::out | std::ofstream::trunc);
+  file << module->initializationText();
+  file << module->combinationalText();
+  file << module->sequentialText();
+  file.close();
 }
 
 Compiler::Compiler(uint patternId) : patternId_ { patternId } { }

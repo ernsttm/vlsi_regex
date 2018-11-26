@@ -40,8 +40,9 @@ class Codon {
    *
    * @param type the CodonType this node represents.
    * @param pattern the characters informing the codon being created.
+   * @param final if the codon is the last codon within the expression.
    */
-  Codon(CodonType type, std::string pattern);
+  Codon(CodonType type, const std::string& pattern, bool final);
 
   /**
    * @return the CodonType this node represents.
@@ -52,6 +53,11 @@ class Codon {
    * @return the characters informing the node being created.
    */
   std::string pattern() const;
+
+  /**
+   * @return true if the codon is the final pattern in the regular expression, false otherwise.
+   */
+  bool final() const;
 
   /**
    * @return the direct children of the Codon node.
@@ -66,6 +72,7 @@ class Codon {
   void addChild(std::shared_ptr<Codon> child);
 
  private:
+  const bool final_;
   const CodonType type_;
   const std::string pattern_;
   std::vector<std::shared_ptr<Codon>> children_;

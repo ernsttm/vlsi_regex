@@ -31,7 +31,7 @@ const std::string BASIC_SEQ = "          // Handle simple pattern logic\n"
                               "          end // end else\n\n";
 
 TEST(compiler_test, basicPattern) {
-  std::shared_ptr<compiler::Codon> codon = std::make_shared<compiler::Codon>(compiler::CodonType::PATTERN, "test");
+  std::shared_ptr<compiler::Codon> codon = std::make_shared<compiler::Codon>(compiler::CodonType::PATTERN, "test", false);
   compiler::PatternCompiler patternCompiler { 1 };
   patternCompiler.handleCodon(codon);
 

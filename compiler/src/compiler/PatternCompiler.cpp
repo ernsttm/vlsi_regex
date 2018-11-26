@@ -24,7 +24,7 @@ void PatternCompiler::handleCodon(std::shared_ptr<compiler::Codon> codon){
   if (codon->pattern().empty()  || !validPattern(codon->pattern())) {
     throw CompilerException { "Patterns must have a valid character sequence to match." };
   }
-  pattern_ = codon->pattern();
+  codon_ = codon;
 
   patternInitComment();
   patternInitDeclare();
@@ -57,21 +57,22 @@ bool PatternCompiler::validPattern(const std::string& pattern) {
 }
 
 void PatternCompiler::patternInitComment() {
-  initStream_ << "  // Expected pattern for " << patternId_ << " with characters " << pattern_ << std::endl;
+  initStream_ << "  // Expected pattern for " << patternId_ << " with characters " << codon_->pattern() << std::endl;
 }
 
 void PatternCompiler::patternInitDeclare() {
-  initStream_ << "  wire [7:0] pattern_" << patternId_ << "_expected [" << pattern_.size() - 1 << ":0];" << std::endl;
+  initStream_ << "  wire [7:0] pattern_" << patternId_ << "_expected [" << codon_->pattern().size() - 1 << ":0];" << std::endl;
 }
 
 void PatternCompiler::patternInitSize() {
-  initStream_ << "  reg [31:0] pattern_" << patternId_ << "_size = " << incrementPatternSize(pattern_.size()) << ";"
-      << std::endl << std::endl;
+  initStream_ << "  reg [31:0] pattern_" << patternId_ << "_size = " << incrementPatternSize(codon_->pattern().size())
+      << ";" << std::endl << std::endl;
 }
 
 void PatternCompiler::patternInitAssign() {
-  for (uint i = 0; i < pattern_.size(); i++) {
-    initStream_ << "  assign pattern_" << patternId_ << "_expected[" << i << "] = \"" << pattern_[i] << "\";"
+  const std::string& pattern = codon_->pattern();
+  for (uint i = 0; i < pattern.size(); i++) {
+    initStream_ << "  assign pattern_" << patternId_ << "_expected[" << i << "] = \"" << pattern[i] << "\";"
         << std::endl;
   }
   initStream_ << std::endl;
@@ -80,8 +81,15 @@ void PatternCompiler::patternInitAssign() {
 void PatternCompiler::patternSeqLogic() {
   seqStream_ << "          // Handle simple pattern logic\n"
                 "          if (data == pattern_" << patternId_ << "_expected[position]) begin\n"
-                "            position <= positionNext;\n"
-                "          end else begin \n"
+                "            position <= positionNext;\n";
+
+  if (codon_->final()) {
+    seqStream_ << "            if (position == pattern_" << patternId_ <<"_size) begin\n"
+                  "              success;\n"
+                  "            end\n";
+  }
+
+  seqStream_ << "          end else begin \n"
                 "            position = 0;\n"
                 "          end // end else\n" << std::endl;
 }

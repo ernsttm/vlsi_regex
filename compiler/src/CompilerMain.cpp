@@ -1,7 +1,7 @@
 //
 // Created by todd on 11/18/18.
 //
-#include <fstream>
+
 #include <iostream>
 #include <string>
 
@@ -23,16 +23,6 @@ std::string getRegexString(const std::string& fileName) {
   }
 
   return regexLine;
-}
-
-void outputModule(const std::string& fileName, std::shared_ptr<compiler::Compiler>& compiledModule) {
-  std::ofstream file { };
-
-  file.open(fileName);
-  file << compiledModule->initializationText();
-  file << compiledModule->combinationalText();
-  file << compiledModule->sequentialText();
-  file.close();
 }
 
 int main(int argc, char** argv) {
