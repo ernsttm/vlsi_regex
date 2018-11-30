@@ -32,7 +32,6 @@ class PatternCompiler : public Compiler {
   ~PatternCompiler() override = default;
 
  private:
-  size_t size_;
   std::shared_ptr<Codon> codon_;
 
   std::ostringstream initStream_;

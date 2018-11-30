@@ -8,7 +8,8 @@ include_directories(include)
 set(COMPILER_SRC src/compiler/Compiler.cpp
                  src/compiler/CompilerException.cpp
                  src/compiler/PatternCompiler.cpp
-                 src/compiler/RootCompiler.cpp)
+                 src/compiler/RootCompiler.cpp
+                 src/compiler/WildcardCompiler.cpp)
 set(PARSER_SRC src/parser/Codon.cpp
                src/parser/Parser.cpp
                src/parser/ParserException.cpp)
@@ -19,7 +20,9 @@ add_executable(regex_compiler ${MAIN_SRC})
 target_link_libraries(regex_compiler regex_compiler_lib)
 
 set(COMPILER_TEST_SRC test/compiler/TestPatternCompiler.cpp)
-set(INTEGRATION_TEST_SRC test/integration/simple/TestSimplePattern.cpp)
+set(INTEGRATION_TEST_SRC test/integration/IntegrationTest.cpp
+                         test/integration/simple/TestSimplePattern.cpp
+                         test/integration/wildcard/TestWildcard.cpp)
 set(PARSER_TEST_SRC test/parser/TestParser.cpp)
 add_executable(regex_test ${COMPILER_TEST_SRC} ${INTEGRATION_TEST_SRC} ${PARSER_TEST_SRC})
 target_link_libraries(regex_test regex_compiler_lib)
