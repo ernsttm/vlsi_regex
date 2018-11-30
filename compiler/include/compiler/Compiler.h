@@ -59,6 +59,8 @@ class Compiler {
 
   const uint patternId_;
 
+  static void resetPatternSize();
+
   static size_t incrementPatternSize(size_t size);
 
  private:

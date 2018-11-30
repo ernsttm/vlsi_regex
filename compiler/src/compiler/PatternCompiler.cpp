@@ -84,7 +84,8 @@ void PatternCompiler::patternSeqLogic() {
                 "            position <= positionNext;\n";
 
   if (codon_->final()) {
-    seqStream_ << "            if (position == pattern_" << patternId_ <<"_size) begin\n"
+    seqStream_ << "            if (position == pattern_" << patternId_ << "_size - 1) begin\n"
+                  "              endPosition = charCounter;\n"
                   "              success;\n"
                   "            end\n";
   }

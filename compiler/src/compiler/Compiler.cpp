@@ -46,6 +46,10 @@ void Compiler::output(const std::string& fileName, std::shared_ptr<compiler::Com
 
 Compiler::Compiler(uint patternId) : patternId_ { patternId } { }
 
+void Compiler::resetPatternSize() {
+  PATTERN_SIZE = 0;
+}
+
 size_t Compiler::incrementPatternSize(size_t size) {
   PATTERN_SIZE += size;
   return PATTERN_SIZE;

@@ -28,7 +28,7 @@ module main;
 
             wait (rdy);
             if (match)
-                $display("%d,%d\n", startPos, endPos);
+                $display("%d,%d", startPos, endPos);
         end
     endtask
 

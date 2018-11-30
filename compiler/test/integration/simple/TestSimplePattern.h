@@ -19,6 +19,14 @@ class TestSimplePattern : public ::testing::Test {
   void SetUp() override;
 
   /**
+   * Remove trailing and leading whitespace from the given string.
+   *
+   * @param str the string to trim.
+   * @return the trimmed string.
+   */
+  std::string trim(const std::string& str);
+
+  /**
    * This method takes the regular expression, and compiles it into an executable with the given name.
    *
    * @param fileName the name of the executable file.

@@ -59,6 +59,8 @@ const std::string ROOT_INITIALIZATION =
     "      matchReg = 1;\n"
     "      endReporter = endPosition;\n"
     "      startReporter = startPosition;\n"
+    "      endPosition = -1;\n"
+    "      startPosition = -1;"
     "    end\n"
     "  endtask \n";
 
@@ -78,15 +80,21 @@ const std::string ROOT_SEQ_HEADER =
     "  always @(reset or posedge clk)\n"
     "    if (reset)\n"
     "      clear;\n"
-    "    else begin\n";
-
-const std::string ROOT_SEQ_FOOTER =
+    "    else if (streamEnd) begin\n"
+    "      if (-1 != endPosition)\n"
+    "        success;\n"
+    "\n"
+    "      readyReg = 1;\n"
+    "    end else begin\n"
     "      // If the position is 0, assign it as a possible start position\n"
     "      // This avoids placing the logic in a specific regular expression subsection.\n"
     "      if (0 == position) begin\n"
     "        // A new opening character has been detected, note the position\n"
-    "        startPosition <= position;\n"
-    "      end // if (0 == startPosition)\n"
+    "        startPosition = charCounter;\n"
+    "      end // if (0 == startPosition)\n";
+
+const std::string ROOT_SEQ_FOOTER =
+
     "\n"
     "      charCounter <= charCounterNext;\n"
     "      readyReg = 1;\n"
@@ -98,6 +106,8 @@ void RootCompiler::handleCodon(std::shared_ptr<compiler::Codon> codon){
   if (CodonType::ROOT != codon->type()) {
     throw CompilerException { "Invalid codon given to root compiler." };
   }
+
+  resetPatternSize();
 
   initText_ = ROOT_INITIALIZATION;
   comboText_ = ROOT_COMBO_HEADER;
