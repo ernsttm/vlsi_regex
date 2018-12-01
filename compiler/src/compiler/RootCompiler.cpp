@@ -88,7 +88,7 @@ const std::string ROOT_SEQ_HEADER =
     "    end else begin\n"
     "      // If the position is 0, assign it as a possible start position\n"
     "      // This avoids placing the logic in a specific regular expression subsection.\n"
-    "      if (0 == position) begin\n"
+    "      if (0 == position && -1 == endPosition) begin\n"
     "        // A new opening character has been detected, note the position\n"
     "        startPosition = charCounter;\n"
     "      end // if (0 == startPosition)\n";

@@ -9,6 +9,8 @@
 #include "compiler/CompilerException.h"
 #include "compiler/PatternCompiler.h"
 #include "compiler/RootCompiler.h"
+#include "compiler/RepetitionCompiler.h"
+#include "compiler/WildcardCompiler.h"
 
 namespace compiler {
 
@@ -25,7 +27,11 @@ std::shared_ptr<Compiler> Compiler::compile(std::shared_ptr<compiler::Codon> cod
       codonCompiler = std::make_shared<PatternCompiler>();
       break;
     case CodonType::WILDCARD:
+      codonCompiler = std::make_shared<WildcardCompiler>();
+      break;
     case CodonType::REPITITION:
+      codonCompiler = std::make_shared<RepetitionCompiler>();
+      break;
     default:
       throw CompilerException { "Codon not recognized." };
   }

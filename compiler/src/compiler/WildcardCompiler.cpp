@@ -46,7 +46,7 @@ std::string WildcardCompiler::sequentialText() {
 
 void WildcardCompiler::wildcardInit() {
   initStream_ << "  // Wildcard for pattern: " << patternId_ << std::endl;
-  initStream_ << "  reg [31:0] pattern_" << patternId_ << "_size = " << incrementPatternSize(1);
+  initStream_ << "  reg [31:0] pattern_" << patternId_ << "_size = " << incrementPatternSize(1) << ";\n\n";
 }
 
 void WildcardCompiler::wildcardSeqLogic() {

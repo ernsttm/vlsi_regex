@@ -29,8 +29,8 @@ TEST_F(TestWildcard, wildcardDoubleMatch) {
   ASSERT_EQ(2, results.size());
   ASSERT_EQ(0, results[0].start);
   ASSERT_EQ(0, results[0].end);
-  ASSERT_EQ(1, results[0].start);
-  ASSERT_EQ(1, results[0].end);
+  ASSERT_EQ(1, results[1].start);
+  ASSERT_EQ(1, results[1].end);
 }
 
 TEST_F(TestWildcard, wildcardNoMatch) {
