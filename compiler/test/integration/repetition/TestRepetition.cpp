@@ -23,4 +23,30 @@ TEST_F(TestRepetition, aBasicMatch) {
   ASSERT_EQ(3, results[0].end);
 }
 
+TEST_F(TestRepetition, aEndMatch) {
+  std::vector<RegexResult> results = execSimulation(AREP_FILE, FILE_PREFIX + "aEndMatch.txt");
+
+  ASSERT_EQ(1, results.size());
+  ASSERT_EQ(3, results[0].start);
+  ASSERT_EQ(3, results[0].end);
+}
+
+TEST_F(TestRepetition, aMultipleMatch) {
+  std::vector<RegexResult> results = execSimulation(AREP_FILE, FILE_PREFIX + "aMultipleMatch.txt");
+
+  ASSERT_EQ(3, results.size());
+  ASSERT_EQ(2, results[0].start);
+  ASSERT_EQ(3, results[0].end);
+  ASSERT_EQ(6, results[1].start);
+  ASSERT_EQ(9, results[1].end);
+  ASSERT_EQ(13, results[2].start);
+  ASSERT_EQ(13, results[2].end);
+}
+
+TEST_F(TestRepetition, aNoMatch) {
+  std::vector<RegexResult> results = execSimulation(AREP_FILE, FILE_PREFIX + "aNoMatch.txt");
+
+  ASSERT_EQ(0, results.size());
+}
+
 }
