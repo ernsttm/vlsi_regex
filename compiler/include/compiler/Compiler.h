@@ -47,6 +47,8 @@ class Compiler {
     */
    virtual std::string sequentialText() = 0;
 
+   uint patternId() const;
+
    virtual ~Compiler() = default;
 
    static std::shared_ptr<Compiler> compile(std::shared_ptr<Codon> codon);

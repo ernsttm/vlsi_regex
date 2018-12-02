@@ -45,12 +45,14 @@ std::string WildcardCompiler::sequentialText() {
 }
 
 void WildcardCompiler::wildcardInit() {
+  size_t patternEnd = incrementPatternSize(1);
   initStream_ << "  // Wildcard for pattern: " << patternId_ << std::endl;
-  initStream_ << "  reg [31:0] pattern_" << patternId_ << "_size = " << incrementPatternSize(1) << ";\n\n";
+  initStream_ << "  reg [31:0] pattern_" << patternId_ << "_end = " << patternEnd << ";\n";
+  initStream_ << "  reg [31:0] pattern_" << patternId_ << "_beg = " << patternEnd - 1 << ";\n\n";
 }
 
 void WildcardCompiler::wildcardSeqLogic() {
-  seqStream_ << "        if (position == pattern_" << patternId_ << "_size - 1) begin\n";
+  seqStream_ << "        if (position == pattern_" << patternId_ << "_beg) begin\n";
   if (codon_->final()) {
     seqStream_ << "          endPosition = charCounter;\n"
                   "          success;\n";

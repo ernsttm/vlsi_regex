@@ -22,7 +22,7 @@ std::string IntegrationTest::trim(const std::string &str) {
 }
 
 void IntegrationTest::createSimulation(const std::string& fileName, const std::string& regex) {
-  static const std::string tempName = fileName + "_temp.v";
+  std::string tempName = fileName + "_temp.v";
 
   compiler::Parser parser { };
   std::shared_ptr<compiler::Codon> root = parser.parse(regex);

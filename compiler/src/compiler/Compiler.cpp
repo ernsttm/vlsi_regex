@@ -16,6 +16,10 @@ namespace compiler {
 
 Compiler::Compiler() : patternId_ { PATTERN_COUNTER++ } { }
 
+uint Compiler::patternId() const {
+  return patternId_;
+}
+
 std::shared_ptr<Compiler> Compiler::compile(std::shared_ptr<compiler::Codon> codon) {
   std::shared_ptr<Compiler> codonCompiler;
 

@@ -13,6 +13,8 @@ namespace compiler_test {
 const std::string BASIC_INIT =
     "  // Expected pattern for 1 with characters test\n"
     "  wire [7:0] pattern_1_expected [3:0];\n"
+    "  reg [31:0] pattern_1_end = 4;\n"
+    "  reg [31:0] pattern_1_beg = 0;\n"
     "  reg [31:0] pattern_1_size = 4;\n"
     "\n"
     "  assign pattern_1_expected[0] = \"t\";\n"
@@ -24,7 +26,7 @@ const std::string BASIC_INIT =
 const std::string BASIC_COMBO = "";
 
 const std::string BASIC_SEQ = "          // Handle simple pattern logic\n"
-                              "          if (data == pattern_1_expected[position]) begin\n"
+                              "          if (data == pattern_1_expected[position - pattern_1_beg]) begin\n"
                               "            position <= positionNext;\n"
                               "          end else begin \n"
                               "            position = 0;\n"

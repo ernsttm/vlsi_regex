@@ -22,8 +22,9 @@ target_link_libraries(regex_compiler regex_compiler_lib)
 
 set(COMPILER_TEST_SRC test/compiler/TestPatternCompiler.cpp)
 set(INTEGRATION_TEST_SRC test/integration/IntegrationTest.cpp
+                         test/integration/combination/TestCombination.cpp
                          test/integration/simple/TestSimplePattern.cpp
-        test/integration/repetition/TestRepetition.cpp
+                         test/integration/repetition/TestRepetition.cpp
                          test/integration/wildcard/TestWildcard.cpp)
 set(PARSER_TEST_SRC test/parser/TestParser.cpp)
 add_executable(regex_test ${COMPILER_TEST_SRC} ${INTEGRATION_TEST_SRC} ${PARSER_TEST_SRC})

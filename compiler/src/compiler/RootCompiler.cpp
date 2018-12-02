@@ -6,6 +6,8 @@
 
 #include "compiler/CompilerException.h"
 
+#include <sstream>
+
 namespace compiler {
 
 // This string contains the header information used by all regex modules.
@@ -60,7 +62,8 @@ const std::string ROOT_INITIALIZATION =
     "      endReporter = endPosition;\n"
     "      startReporter = startPosition;\n"
     "      endPosition = -1;\n"
-    "      startPosition = -1;"
+    "      startPosition = -1;\n"
+    "      position <= 0;\n"
     "    end\n"
     "  endtask \n";
 
@@ -75,7 +78,7 @@ const std::string ROOT_COMBO_FOOTER =
     "end // always @(*)\n";
 
 const std::string ROOT_SEQ_HEADER =
-    "// Sequential logic for determining if stream matches the given regular\n"
+    "  // Sequential logic for determining if stream matches the given regular\n"
     "  // expression\n"
     "  always @(reset or posedge clk)\n"
     "    if (reset)\n"
@@ -94,7 +97,6 @@ const std::string ROOT_SEQ_HEADER =
     "      end // if (0 == startPosition)\n";
 
 const std::string ROOT_SEQ_FOOTER =
-
     "\n"
     "      charCounter <= charCounterNext;\n"
     "      readyReg = 1;\n"
@@ -118,7 +120,15 @@ void RootCompiler::handleCodon(std::shared_ptr<compiler::Codon> codon){
 
     initText_.append(codonCompiler->initializationText());
     comboText_.append(codonCompiler->combinationalText());
+
+
+    // Add the headers for the various subsections
+    std::ostringstream header;
+    header << "      if (pattern_" << codonCompiler->patternId() << "_beg <= position && "
+              " position < pattern_" << codonCompiler->patternId() << "_end) begin\n";
+    seqText_.append(header.str());
     seqText_.append(codonCompiler->sequentialText());
+    seqText_.append("      end\n");
   }
 
   comboText_.append(ROOT_COMBO_FOOTER);

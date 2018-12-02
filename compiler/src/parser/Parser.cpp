@@ -17,32 +17,33 @@ std::shared_ptr<Codon> Parser::parse(std::string regExpr) {
   // codon detected will be the final one interpreted.
   bool final = true;
   std::shared_ptr<Codon>& currentRoot = rootNode;
-  for (int i = (int)(regExpr.size() - 1); i >= 0; i--) {
-    char c = regExpr[i];
+  int index = (int)(regExpr.size() - 1);
+  while (index >= 0) {
+    char c = regExpr[index];
 
     if (standardCharacter(c)) {
-      std::string pattern = getPattern(regExpr, i);
-      i -= pattern.size();
+      std::string pattern = getPattern(regExpr, index);
+      index -= pattern.size();
       std::shared_ptr<Codon> patternCodon = std::make_shared<Codon>(CodonType::PATTERN, pattern, final);
       currentRoot->addChild(patternCodon);
     } else if ('.' == c) {
-      i -= 1;
+      index -= 1;
       std::shared_ptr<Codon> wildcardCodon = std::make_shared<Codon>(CodonType::WILDCARD, "", final);
       currentRoot->addChild(wildcardCodon);
     } else if ('+' == c) {
-      i -= 1;
+      index -= 1;
 
-      if (regExpr[i] == ')') {
-        i -= 1;
+      if (regExpr[index] == ')') {
+        index -= 1;
       }
 
-      std::string pattern = getPattern(regExpr, i);
-      i -= pattern.size();
+      std::string pattern = getPattern(regExpr, index);
+      index -= pattern.size();
       std::shared_ptr<Codon> repetitionCodon = std::make_shared<Codon>(CodonType::REPITITION, pattern, final);
       currentRoot->addChild(repetitionCodon);
 
-      if (regExpr[i] == '(') {
-        i -= 1;
+      if (regExpr[index] == '(') {
+        index -= 1;
       }
     } else {
       std::string errorMessage = "Unsupported character : ";

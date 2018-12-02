@@ -45,10 +45,16 @@ std::string RepetitionCompiler::sequentialText() {
 }
 
 void RepetitionCompiler::repetitionInit() {
+  size_t patternEnd = incrementPatternSize(codon_->pattern().size());
   initStream_ << "  // Expected repetition for " << patternId_ << " with characters " << codon_->pattern() << std::endl;
   initStream_ << "  wire [7:0] pattern_" << patternId_ << "_expected [" << codon_->pattern().size() - 1 << ":0];\n";
-  initStream_ << "  reg [31:0] pattern_" << patternId_ << "_size = " << incrementPatternSize(codon_->pattern().size())
-      << ";" << std::endl << std::endl;
+  initStream_ << "  reg [31:0] pattern_" << patternId_ << "_end = " << patternEnd << ";\n";
+  initStream_ << "  reg [31:0] pattern_" << patternId_ << "_beg = " << patternEnd - codon_->pattern().size() << ";\n";
+  initStream_ << "  reg [31:0] pattern_" << patternId_ << "_size = " << codon_->pattern().size() << ";\n\n";
+
+  if (!codon_->final()) {
+    initStream_ << "  reg [0:0] pattern_" << patternId_ << "_found = 0;\n";
+  }
 
   initStream_ << "  // Repetition patterns require a special subtractor in the repetition case.\n"
                  "  reg [31:0] pattern_" << patternId_ << "_reset;\n\n";
@@ -66,14 +72,16 @@ void RepetitionCompiler::repetitionCombo() {
 }
 
 void RepetitionCompiler::repetitionSeq() {
-  seqStream_ << "  if (data == pattern_" << patternId_ << "_expected[position]) begin\n"
+  seqStream_ << "  if (data == pattern_" << patternId_ << "_expected[position - pattern_" << patternId_ << "_beg]) begin\n"
                 "    position <= positionNext;\n"
                 "\n"
-                "    if (position == pattern_" << patternId_ << "_size - 1) begin\n"
+                "    if (position == pattern_" << patternId_ << "_end - 1) begin\n"
                 "      position <= pattern_" << patternId_ << "_reset;\n";
 
   if (codon_->final()) {
     seqStream_ << "      endPosition <= charCounter;\n";
+  } else {
+    seqStream_ << "      pattern_" << patternId_ << "_found = 1;\n";
   }
 
   seqStream_ << "    end\n"
@@ -83,11 +91,18 @@ void RepetitionCompiler::repetitionSeq() {
     seqStream_ << "    if (-1 != endPosition) begin\n"
                   "      success;\n"
                   "    end\n"
-                  "    endPosition <= -1;\n\n";
+                  "    endPosition <= -1;\n"
+                  "    position <= 0;\n";
+  } else {
+    seqStream_ << "    if (pattern_" << patternId_ << "_found) begin\n"
+                  "      position = pattern_" << patternId_ << "_end;\n"
+                  "      positionNext = pattern_" << patternId_ << "_end + 1;\n"
+                  "    end else begin\n"
+                  "      position <= 0;\n"
+                  "    end\n";
+    seqStream_ << "    pattern_" << patternId_ << "_found = 0;\n";
   }
-
-  seqStream_ << "  position <= 0;\n"
-                "  end\n";
+  seqStream_ << "    end\n";
 }
 
 }

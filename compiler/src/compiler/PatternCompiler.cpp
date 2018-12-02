@@ -65,8 +65,10 @@ void PatternCompiler::patternInitDeclare() {
 }
 
 void PatternCompiler::patternInitSize() {
-  initStream_ << "  reg [31:0] pattern_" << patternId_ << "_size = " << incrementPatternSize(codon_->pattern().size())
-      << ";" << std::endl << std::endl;
+  size_t patternEnd = incrementPatternSize(codon_->pattern().size());
+  initStream_ << "  reg [31:0] pattern_" << patternId_ << "_end = " << patternEnd << ";\n";
+  initStream_ << "  reg [31:0] pattern_" << patternId_ << "_beg = " << patternEnd - codon_->pattern().size() << ";\n";
+  initStream_ << "  reg [31:0] pattern_" << patternId_ << "_size = " << codon_->pattern().size() << ";\n\n";
 }
 
 void PatternCompiler::patternInitAssign() {
@@ -80,11 +82,12 @@ void PatternCompiler::patternInitAssign() {
 
 void PatternCompiler::patternSeqLogic() {
   seqStream_ << "          // Handle simple pattern logic\n"
-                "          if (data == pattern_" << patternId_ << "_expected[position]) begin\n"
+                "          if (data == pattern_" << patternId_ << "_expected[position - pattern_" << patternId_
+                    << "_beg]) begin\n"
                 "            position <= positionNext;\n";
 
   if (codon_->final()) {
-    seqStream_ << "            if (position == pattern_" << patternId_ << "_size - 1) begin\n"
+    seqStream_ << "            if (position == pattern_" << patternId_ << "_end - 1) begin\n"
                   "              endPosition = charCounter;\n"
                   "              success;\n"
                   "            end\n";

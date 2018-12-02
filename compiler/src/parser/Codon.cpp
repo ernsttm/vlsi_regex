@@ -28,7 +28,7 @@ std::vector<std::shared_ptr<Codon>> Codon::children() const {
 }
 
 void Codon::addChild(std::shared_ptr<Codon> child) {
-  children_.push_back(child);
+  children_.insert(children_.begin(), child);
 }
 
 }
