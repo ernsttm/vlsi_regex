@@ -52,10 +52,6 @@ void RepetitionCompiler::repetitionInit() {
   initStream_ << "  reg [31:0] pattern_" << patternId_ << "_beg = " << patternEnd - codon_->pattern().size() << ";\n";
   initStream_ << "  reg [31:0] pattern_" << patternId_ << "_size = " << codon_->pattern().size() << ";\n\n";
 
-  if (!codon_->final()) {
-    initStream_ << "  reg [0:0] pattern_" << patternId_ << "_found = 0;\n";
-  }
-
   initStream_ << "  // Repetition patterns require a special subtractor in the repetition case.\n"
                  "  reg [31:0] pattern_" << patternId_ << "_reset;\n\n";
 
@@ -81,7 +77,7 @@ void RepetitionCompiler::repetitionSeq() {
   if (codon_->final()) {
     seqStream_ << "      endPosition <= charCounter;\n";
   } else {
-    seqStream_ << "      pattern_" << patternId_ << "_found = 1;\n";
+    seqStream_ << "      rep_found = 1;\n";
   }
 
   seqStream_ << "    end\n"
@@ -94,13 +90,13 @@ void RepetitionCompiler::repetitionSeq() {
                   "    endPosition <= -1;\n"
                   "    position <= 0;\n";
   } else {
-    seqStream_ << "    if (pattern_" << patternId_ << "_found) begin\n"
+    seqStream_ << "    if (rep_found) begin\n"
                   "      position = pattern_" << patternId_ << "_end;\n"
                   "      positionNext = pattern_" << patternId_ << "_end + 1;\n"
                   "    end else begin\n"
                   "      position <= 0;\n"
                   "    end\n";
-    seqStream_ << "    pattern_" << patternId_ << "_found = 0;\n";
+    seqStream_ << "    rep_found = 0;\n";
   }
   seqStream_ << "    end\n";
 }

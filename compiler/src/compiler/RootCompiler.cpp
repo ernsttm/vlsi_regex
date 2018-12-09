@@ -26,6 +26,7 @@ const std::string ROOT_INITIALIZATION =
     "  // Status registers for loading wires\n"
     "  reg matchReg;\n"
     "  reg readyReg;\n"
+    "  reg rep_found = 0;\n"
     "\n"
     "  wire rdy = readyReg;\n"
     "  wire match = matchReg;\n"
@@ -91,7 +92,7 @@ const std::string ROOT_SEQ_HEADER =
     "    end else begin\n"
     "      // If the position is 0, assign it as a possible start position\n"
     "      // This avoids placing the logic in a specific regular expression subsection.\n"
-    "      if (0 == position && -1 == endPosition) begin\n"
+    "      if (0 == position && -1 == endPosition  && !rep_found) begin\n"
     "        // A new opening character has been detected, note the position\n"
     "        startPosition = charCounter;\n"
     "      end // if (0 == startPosition)\n";
